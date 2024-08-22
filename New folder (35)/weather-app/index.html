@@ -1,0 +1,60 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Weather App</title>  
+</head>  
+<body>  
+    <input id="city-input" type="text" placeholder="Enter city name" />  
+    <button onclick="getWeather(document.getElementById('city-input').value)">Get Weather</button>  
+    <div class="weather loading">  
+        <div class="city"></div>  
+        <img class="icon" alt="Weather icon" />  
+        <div class="description"></div>  
+        <div class="temp"></div>  
+        <div class="humidity"></div>  
+        <div class="wind"></div>  
+    </div>  
+
+    <script>  
+        async function getWeather(city) {  
+            const apiKey = 'YOUR_API_KEY'; // Insert your OpenWeather API key  
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;  
+
+            try {  
+                const response = await fetch(url);  
+                if (!response.ok) {  
+                    throw new Error('City not found');  
+                }  
+                const data = await response.json();  
+                displayWeather(data);  
+            } catch (error) {  
+                console.error(error);  
+                alert('Error: ' + error.message);  
+            }  
+        }  
+
+        function displayWeather(data) {  
+            const { name } = data;  
+            const { icon, description } = data.weather[0];  
+            const { temp, humidity } = data.main;  
+            const { speed } = data.wind;  
+
+            document.querySelector(".city").innerText = `Weather in ${name}`;  
+            document.querySelector(".icon").src = `https://openweathermap.org/img/wn/${icon}.png`;  
+            document.querySelector(".description").innerText = description;  
+            document.querySelector(".temp").innerText = `${temp}°C`;  
+            document.querySelector(".humidity").innerText = `Humidity: ${humidity}%`;  
+            document.querySelector(".wind").innerText = `Wind speed: ${speed} km/h`;  
+            document.querySelector(".weather").classList.remove("loading");  
+
+            // Set the background image  
+            const backgroundImageUrl = `https://source.unsplash.com/1600x900/?${encodeURIComponent(name)},landscape`;  
+            document.body.style.backgroundImage = `url('${backgroundImageUrl}')`;  
+
+            console.log(`Background Image URL: ${backgroundImageUrl}`); // Log for debugging  
+        }  
+    </script>  
+</body>  
+</html>
